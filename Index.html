@@ -1,0 +1,1169 @@
+<!DOCTYPE html>
+<html lang="bn" class="dark scroll-smooth">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>বাংলাদেশ পিংক বাস সার্ভিস রিপোর্ট | লিঙ্গভিত্তিক গতিশীলতা বিশ্লেষণ</title>
+    <!-- Tailwind CSS CDN -->
+    <script src="https://cdn.tailwindcss.com"></script>
+    <script>
+        tailwind.config = {
+            darkMode: 'class',
+            theme: {
+                extend: {
+                    colors: {
+                        obsidian: {
+                            900: '#080911',
+                            800: '#0f111a',
+                            700: '#181b28',
+                            600: '#23273a'
+                        },
+                        pinkGlow: {
+                            500: '#ec4899',
+                            600: '#db2777',
+                            400: '#f472b6',
+                            alpha: 'rgba(236, 72, 153, 0.15)'
+                        }
+                    },
+                    fontFamily: {
+                        sans: ['Hind Siliguri', 'Plus Jakarta Sans', 'sans-serif'],
+                        display: ['Noto Sans Bengali', 'Syne', 'sans-serif'],
+                        mono: ['Space Grotesk', 'monospace']
+                    }
+                }
+            }
+        }
+    </script>
+    <!-- Google Fonts for Bangla & Latin -->
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Hind+Siliguri:wght@300;400;500;600;700&family=Noto+Sans+Bengali:wght@400;600;700;800&family=Plus+Jakarta+Sans:wght@400;500;600;700&family=Space+Grotesk:wght@400;600;700&family=Syne:wght@700;800&display=swap" rel="stylesheet">
+    <!-- Lucide Icons -->
+    <script src="https://unpkg.com/lucide@latest"></script>
+    <!-- Chart.js CDN -->
+    <script src="https://cdn.jsdelivr.net/npm/chart.js"></script>
+    <style>
+        .glass-card {
+            background: rgba(15, 17, 26, 0.75);
+            backdrop-filter: blur(16px);
+            border: 1px solid rgba(255, 255, 255, 0.08);
+        }
+        .glass-card-hover {
+            transition: all 0.3s cubic-bezier(0.4, 0, 0.2, 1);
+        }
+        .glass-card-hover:hover {
+            border-color: rgba(236, 72, 153, 0.4);
+            box-shadow: 0 10px 30px -10px rgba(236, 72, 153, 0.25);
+            transform: translateY(-2px);
+        }
+        .pink-gradient-text {
+            background: linear-gradient(135deg, #f472b6 0%, #ec4899 50%, #c084fc 100%);
+            -webkit-background-clip: text;
+            -webkit-text-fill-color: transparent;
+        }
+        .custom-scrollbar::-webkit-scrollbar {
+            width: 6px;
+            height: 6px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-track {
+            background: #080911;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb {
+            background: #23273a;
+            border-radius: 4px;
+        }
+        .custom-scrollbar::-webkit-scrollbar-thumb:hover {
+            background: #ec4899;
+        }
+    </style>
+</head>
+<body class="bg-obsidian-900 text-slate-200 font-sans antialiased selection:bg-pink-500 selection:text-white custom-scrollbar min-h-screen">
+
+    <!-- এম্বিয়েন্ট লাইটিং ব্যাকগ্রাউন্ড অরবস -->
+    <div class="fixed top-0 left-1/4 w-96 h-96 bg-pink-600/10 rounded-full filter blur-[120px] pointer-events-none -z-10 animate-pulse"></div>
+    <div class="fixed bottom-1/3 right-1/4 w-[30rem] h-[30rem] bg-purple-600/10 rounded-full filter blur-[150px] pointer-events-none -z-10"></div>
+
+    <!-- টপ নেভিগেশন হেডার -->
+    <header class="sticky top-0 z-50 bg-obsidian-900/80 backdrop-blur-xl border-b border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 h-20 flex items-center justify-between">
+            <div class="flex items-center space-x-3">
+                <div class="w-10 h-10 rounded-xl bg-gradient-to-tr from-pink-500 to-purple-600 flex items-center justify-center shadow-lg shadow-pink-500/30">
+                    <i data-lucide="bus" class="w-6 h-6 text-white"></i>
+                </div>
+                <div>
+                    <span class="font-display font-extrabold text-base sm:text-lg text-white tracking-wide">বাংলাদেশ পরিবহন রিপোর্ট</span>
+                    <span class="block text-xs text-pink-400 font-mono tracking-wider font-semibold">নারী-বান্ধব গতিশীলতা বিশ্লেষণ</span>
+                </div>
+            </div>
+
+            <!-- ডেক্সটপ নেভিগেশন -->
+            <nav class="hidden lg:flex items-center space-x-1 font-medium text-xs font-sans">
+                <a href="#overview" class="px-3 py-2 text-slate-300 hover:text-pink-400 hover:bg-white/5 rounded-lg transition-all">সারসংক্ষেপ</a>
+                <a href="#crisis" class="px-3 py-2 text-slate-300 hover:text-pink-400 hover:bg-white/5 rounded-lg transition-all">সংকট ও উপাত্ত</a>
+                <a href="#matrix" class="px-3 py-2 text-slate-300 hover:text-pink-400 hover:bg-white/5 rounded-lg transition-all">দোলনচাঁপা বনাম বিআরটিসি</a>
+                <a href="#workforce" class="px-3 py-2 text-slate-300 hover:text-pink-400 hover:bg-white/5 rounded-lg transition-all">নারী কর্মী বাহিনী</a>
+                <a href="#routes" class="px-3 py-2 text-slate-300 hover:text-pink-400 hover:bg-white/5 rounded-lg transition-all">রুট ও নেটওয়ার্ক</a>
+                <a href="#policy" class="px-3 py-2 text-slate-300 hover:text-pink-400 hover:bg-white/5 rounded-lg transition-all">নীতি ও রায়</a>
+                <a href="#sources" class="px-3 py-2 text-slate-300 hover:text-pink-400 hover:bg-white/5 rounded-lg transition-all">তথ্যসূত্র</a>
+            </nav>
+
+            <div class="flex items-center space-x-3">
+                <a href="#sources" class="hidden sm:inline-flex items-center space-x-2 px-4 py-2 text-xs font-mono font-semibold text-white bg-pink-600/20 border border-pink-500/40 rounded-lg hover:bg-pink-600 transition-all shadow-sm shadow-pink-500/20">
+                    <i data-lucide="file-text" class="w-4 h-4"></i>
+                    <span>পিডিএফ উপাত্ত</span>
+                </a>
+                <button id="mobile-menu-btn" class="lg:hidden p-2 text-slate-400 hover:text-white">
+                    <i data-lucide="menu" class="w-6 h-6"></i>
+                </button>
+            </div>
+        </div>
+
+        <!-- মোবাইল নেভিগেশন ড্রয়ার -->
+        <div id="mobile-menu" class="hidden lg:hidden bg-obsidian-800 border-b border-white/10 px-4 py-4 space-y-2 text-sm">
+            <a href="#overview" class="block px-3 py-2 text-slate-300 hover:text-pink-400 font-medium">সারসংক্ষেপ</a>
+            <a href="#crisis" class="block px-3 py-2 text-slate-300 hover:text-pink-400 font-medium">সংকট ও উপাত্ত</a>
+            <a href="#matrix" class="block px-3 py-2 text-slate-300 hover:text-pink-400 font-medium">দোলনচাঁপা বনাম বিআরটিসি</a>
+            <a href="#workforce" class="block px-3 py-2 text-slate-300 hover:text-pink-400 font-medium">নারী কর্মী বাহিনী</a>
+            <a href="#routes" class="block px-3 py-2 text-slate-300 hover:text-pink-400 font-medium">রুট ও নেটওয়ার্ক</a>
+            <a href="#policy" class="block px-3 py-2 text-slate-300 hover:text-pink-400 font-medium">নীতি ও রায়</a>
+            <a href="#sources" class="block px-3 py-2 text-slate-300 hover:text-pink-400 font-medium">তথ্যসূত্র</a>
+        </div>
+    </header>
+
+    <!-- হিরো সেকশন -->
+    <section id="overview" class="relative pt-12 pb-20 overflow-hidden">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <!-- ব্যাজ -->
+            <div class="inline-flex items-center space-x-2 px-3 py-1.5 rounded-full bg-pink-500/10 border border-pink-500/30 text-pink-400 text-xs font-mono mb-6">
+                <span class="w-2 h-2 rounded-full bg-pink-500 animate-ping"></span>
+                <span>রাষ্ট্রীয় পদক্ষেপ ও গতিশীলতা বিশ্লেষণ • আগস্ট ২০২৬ আপডেট</span>
+            </div>
+
+            <!-- শিরোনাম ও মূল প্রস্তাবনা -->
+            <div class="grid lg:grid-cols-12 gap-8 items-center">
+                <div class="lg:col-span-8">
+                    <h1 class="font-display text-3xl sm:text-4xl lg:text-5xl font-extrabold text-white tracking-tight leading-[1.2]">
+                        লিঙ্গভিত্তিক গতিশীলতা ও <br>
+                        <span class="pink-gradient-text">নগর পরিবহন অবকাঠামো</span>
+                    </h1>
+                    <p class="mt-6 text-base sm:text-lg text-slate-300 leading-relaxed max-w-2xl font-light">
+                        বাংলাদেশে নারীদের জন্য নিবেদিত গণবাস সেবাসমূহের ওপর একটি বিশ্লেষণাত্মক রিপোর্ট—যা ২০১৮ সালের বেসরকারি <strong class="text-white">"দোলনচাঁপা"</strong> উদ্যোগ থেকে শুরু করে চরম নিরাপত্তাহীনতার মুখে আগস্ট ২০২৬-এ চালু হওয়া সরকারি বিআরটিসি (BRTC) <strong class="text-white font-semibold text-pink-300">"পিংক বাস সার্ভিস"</strong> পর্যন্ত বাস্তব পরিস্থিতি মূল্যায়ন করে।
+                    </p>
+                </div>
+                <div class="lg:col-span-4">
+                    <div class="glass-card p-6 rounded-2xl border border-pink-500/20 relative overflow-hidden">
+                        <div class="absolute top-0 right-0 p-4 opacity-10">
+                            <i data-lucide="shield-alert" class="w-32 h-32 text-pink-500"></i>
+                        </div>
+                        <div class="relative z-10">
+                            <span class="text-xs font-mono uppercase text-pink-400 tracking-wider">জনসংখ্যাগত বাস্তবতা</span>
+                            <div class="text-4xl font-extrabold text-white mt-1 font-display">৫৪.৩৮%</div>
+                            <p class="text-xs text-slate-400 mt-1">ঢাকার নগর জনসংখ্যার নারী অনুপাত যাদের প্রতিদিন কাজের তাগিদে যাতায়াত প্রয়োজন।</p>
+                            
+                            <hr class="my-4 border-white/10">
+
+                            <div class="flex justify-between items-center text-xs font-mono">
+                                <span class="text-slate-400">গণবাসের ধারণক্ষমতা:</span>
+                                <span class="text-amber-400 font-bold">&gt;৫০% যাত্রী পরিবহন</span>
+                            </div>
+                            <div class="flex justify-between items-center text-xs font-mono mt-1">
+                                <span class="text-slate-400">রাস্তার দখল:</span>
+                                <span class="text-rose-400 font-bold">মাত্র ১০% সড়ক স্থান</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- মূল মেট্রিক কার্ডসমূহ -->
+            <div class="mt-12 grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-5">
+                <div class="glass-card glass-card-hover p-6 rounded-2xl border border-white/5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">ব্র্যাক সুরক্ষা সূচক</span>
+                        <div class="p-2 bg-rose-500/10 rounded-lg text-rose-400">
+                            <i data-lucide="alert-triangle" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-3xl font-extrabold font-display text-white">৯৪.০%</div>
+                    <p class="text-xs text-slate-400 mt-2">সাধারণ গণপরিবহনে যৌন হয়রানির শিকার হওয়া নারী যাত্রী।</p>
+                </div>
+
+                <div class="glass-card glass-card-hover p-6 rounded-2xl border border-white/5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">বিআরটিসি বহর ২০২৬</span>
+                        <div class="p-2 bg-pink-500/10 rounded-lg text-pink-400">
+                            <i data-lucide="bus" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-3xl font-extrabold font-display text-white">১৪টি বাস</div>
+                    <p class="text-xs text-slate-400 mt-2">ঢাকার রুটে ১০টি, চট্টগ্রামে ২টি এবং বগুড়া জেলায় ২টি বাস চালুকৃত।</p>
+                </div>
+
+                <div class="glass-card glass-card-hover p-6 rounded-2xl border border-white/5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">শ্রমশক্তির পরিবর্তন</span>
+                        <div class="p-2 bg-purple-500/10 rounded-lg text-purple-400">
+                            <i data-lucide="users" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-3xl font-extrabold font-display text-white">১০০% নারী</div>
+                    <p class="text-xs text-slate-400 mt-2">১৫ জন প্রশিক্ষণপ্রাপ্ত নারী চালক এবং ২৪ জন নারী কন্ডাক্টর দ্বারা পরিচালিত।</p>
+                </div>
+
+                <div class="glass-card glass-card-hover p-6 rounded-2xl border border-white/5">
+                    <div class="flex items-center justify-between">
+                        <span class="text-xs font-mono text-slate-400 uppercase tracking-wider">সহযাত্রীর অনীহার ব্যবধান</span>
+                        <div class="p-2 bg-amber-500/10 rounded-lg text-amber-400">
+                            <i data-lucide="eye-off" class="w-5 h-5"></i>
+                        </div>
+                    </div>
+                    <div class="mt-4 text-3xl font-extrabold font-display text-white">৭০.০%</div>
+                    <p class="text-xs text-slate-400 mt-2">প্রতিবাদের মানসিকতা (৯০%) থাকা সত্ত্বেও বাস্তবে পদক্ষেপ না নেওয়ার (২০%) ব্যবধান।</p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- তথ্যাশ্রয়ী সূচক ও গণপরিবহন সংকট সেকশন -->
+    <section id="crisis" class="py-16 bg-obsidian-800/50 border-y border-white/5 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-12">
+                <div>
+                    <span class="text-xs font-mono text-pink-400 uppercase tracking-widest">ধারা ০১ • তথ্যাশ্রয়ী সূচক</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-white mt-2">গণপরিবহনে নারী নিরাপত্তার সংকট</h2>
+                    <p class="text-slate-400 text-sm mt-1 max-w-xl">
+                        ব্র্যাক ট্রান্সপোর্ট সেফটি স্টাডি, অ্যাকশনএইড/ইউএনডিপি এবং বাড্ডা ট্রানজিট সেফটি গবেষণার উপাত্তের সারসংক্ষেপ।
+                    </p>
+                </div>
+                <div class="mt-4 md:mt-0">
+                    <div class="inline-flex rounded-lg bg-obsidian-900 p-1 border border-white/10 text-xs font-mono">
+                        <span class="px-3 py-1 rounded bg-pink-600 text-white font-bold">ব্র্যাক সমীক্ষা</span>
+                        <span class="px-3 py-1 text-slate-400">বাড্ডা ট্রানজিট সার্ভে</span>
+                    </div>
+                </div>
+            </div>
+
+            <!-- চার্ট গ্রিড -->
+            <div class="grid grid-cols-1 lg:grid-cols-12 gap-8">
+                <!-- হয়রানির পর ভুক্তভোগীর প্রতিক্রিয়া চার্ট -->
+                <div class="lg:col-span-7 glass-card p-6 rounded-2xl">
+                    <div class="flex items-center justify-between mb-4">
+                        <h3 class="font-display text-base font-bold text-white flex items-center gap-2">
+                            <i data-lucide="pie-chart" class="w-5 h-5 text-pink-400"></i>
+                            হয়রানির পর ভুক্তভোগী নারীদের প্রতিক্রিয়া
+                        </h3>
+                        <span class="text-xs font-mono text-slate-400">ব্র্যাক ডেটা (%)</span>
+                    </div>
+                    <div class="h-80 relative">
+                        <canvas id="victimActionsChart"></canvas>
+                    </div>
+                    <p class="text-xs text-slate-400 mt-4 italic border-t border-white/10 pt-3">
+                        *বিশেষ দ্রষ্টব্য: সামাজিক ভীতি, আইনি জটিলতা ও ট্রাস্টের অভাবে ০.০% ভুক্তভোগী আনুষ্ঠানিকভাবে আইনি সাহায্য চেয়েছেন।
+                    </p>
+                </div>
+
+                <!-- অপরাধীদের বয়স চার্ট -->
+                <div class="lg:col-span-5 glass-card p-6 rounded-2xl flex flex-col justify-between">
+                    <div>
+                        <div class="flex items-center justify-between mb-4">
+                            <h3 class="font-display text-base font-bold text-white flex items-center gap-2">
+                                <i data-lucide="users-round" class="w-5 h-5 text-purple-400"></i>
+                                অপরাধীদের বয়সভিত্তিক অনুপাত
+                            </h3>
+                            <span class="text-xs font-mono text-slate-400">বয়স (%)</span>
+                        </div>
+                        <div class="h-64 relative">
+                            <canvas id="perpetratorAgeChart"></canvas>
+                        </div>
+                    </div>
+                    
+                    <div class="bg-obsidian-900/80 p-4 rounded-xl border border-white/10 mt-4">
+                        <div class="flex items-start gap-3">
+                            <i data-lucide="shield-x" class="w-5 h-5 text-rose-400 shrink-0 mt-0.5"></i>
+                            <div class="text-xs text-slate-300">
+                                <span class="font-semibold text-white">পরিবহন বর্জনের আচরণ:</span> <strong>২০.৫%</strong> কর্মজীবী নারী নিরাপত্তাহীনতার ভয়ে সরাসরি গণপরিবহন ব্যবহার বর্জন করেন (অ্যাকশনএইড / ইউএনডিপি রিপোর্ট)।
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- বিশদ গবেষণালব্ধ সারণী (Table) -->
+            <div class="mt-12 glass-card rounded-2xl overflow-hidden">
+                <div class="p-6 border-b border-white/10 flex items-center justify-between">
+                    <h3 class="font-display text-base font-bold text-white">তথ্যাশ্রয়ী সূচক ও ঘটনার প্রেক্ষাপট</h3>
+                    <span class="text-xs font-mono bg-pink-500/10 text-pink-400 border border-pink-500/30 px-3 py-1 rounded-full">প্রাথমিক উপাত্ত</span>
+                </div>
+                <div class="overflow-x-auto">
+                    <table class="w-full text-left text-sm text-slate-300">
+                        <thead class="bg-obsidian-900 text-xs font-mono uppercase text-slate-400 border-b border-white/10">
+                            <tr>
+                                <th class="p-4">সূচক / ঘটনার ধরণ</th>
+                                <th class="p-4 text-pink-400 font-bold">গবেষণালব্ধ তথ্য (%)</th>
+                                <th class="p-4">প্রাথমিক উৎস</th>
+                                <th class="p-4">সামাজিক-মনস্তাত্ত্বিক প্রেক্ষিত</th>
+                            </tr>
+                        </thead>
+                        <tbody class="divide-y divide-white/5 text-xs sm:text-sm">
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="p-4 font-medium text-white">গণপরিবহনে যৌন হয়রানির শিকার নারী</td>
+                                <td class="p-4 font-mono font-bold text-rose-400 text-base">৯৪.০%</td>
+                                <td class="p-4 text-xs font-mono">ব্র্যাক ট্রান্সপোর্ট সেফটি স্টাডি</td>
+                                <td class="p-4 text-xs text-slate-400">জনাকীর্ণ সাধারণ বাসে শারীরিক সীমানা লঙ্ঘনের ভয়াবহ বিস্তার</td>
+                            </tr>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="p-4 font-medium text-white">৪১–৬০ বছর বয়সী পুরুষ অপরাধী</td>
+                                <td class="p-4 font-mono font-bold text-amber-400 text-base">৬৬.০%</td>
+                                <td class="p-4 text-xs font-mono">ব্র্যাক ট্রান্সপোর্ট সেফটি স্টাডি</td>
+                                <td class="p-4 text-xs text-slate-400">জ্যেষ্ঠ বয়সের পুরুষ কর্তৃক ক্ষমতাকেন্দ্রিক মনস্তাত্ত্বিক সুযোগ গ্রহণ</td>
+                            </tr>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="p-4 font-medium text-white">২৬–৪০ বছর বয়সী পুরুষ অপরাধী</td>
+                                <td class="p-4 font-mono font-bold text-amber-400 text-base">৫৯.০%</td>
+                                <td class="p-4 text-xs font-mono">ব্র্যাক ট্রান্সপোর্ট সেফটি স্টাডি</td>
+                                <td class="p-4 text-xs text-slate-400">নিয়মিত কর্মজীবী ও তরুণ পুরুষ যাত্রীদের অনভিপ্রেত আচরণ</td>
+                            </tr>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="p-4 font-medium text-white">হয়রানির সময় নীরব থাকা ভুক্তভোগী</td>
+                                <td class="p-4 font-mono font-bold text-pink-400 text-base">৮১.০%</td>
+                                <td class="p-4 text-xs font-mono">ব্র্যাক ট্রান্সপোর্ট সেফটি স্টাডি</td>
+                                <td class="p-4 text-xs text-slate-400">সামাজিক লজ্জা, ভিকটিম ব্লেমিং ও পরিবার কর্তৃক চলাচলে বাধার ভয়</td>
+                            </tr>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="p-4 font-medium text-white">বাসের ভেতরে স্থান পরিবর্তন করা</td>
+                                <td class="p-4 font-mono font-bold text-slate-200 text-base">৭৯.০%</td>
+                                <td class="p-4 text-xs font-mono">ব্র্যাক ট্রান্সপোর্ট সেফটি স্টাডি</td>
+                                <td class="p-4 text-xs text-slate-400">তাৎক্ষণিক স্থান পরিবর্তন করে দূরত্ব তৈরির আত্মরক্ষা কৌশল</td>
+                            </tr>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="p-4 font-medium text-white">সুরক্ষা হিসেবে ধর্মীয় পোশাক (হিজাব) গ্রহণ</td>
+                                <td class="p-4 font-mono font-bold text-purple-400 text-base">৪৬.০%</td>
+                                <td class="p-4 text-xs font-mono">ব্র্যাক ট্রান্সপোর্ট সেফটি স্টাডি</td>
+                                <td class="p-4 text-xs text-slate-400">অনাকাঙ্ক্ষিত নজর এড়ানোর জন্য পোশাককে ঢাল হিসেবে ব্যবহার</td>
+                            </tr>
+                            <tr class="hover:bg-white/[0.02] transition-colors">
+                                <td class="p-4 font-medium text-white">নি নিরাপত্তাহীনতায় পরিবহন বর্জন করা</td>
+                                <td class="p-4 font-mono font-bold text-red-400 text-base">২০.৫%</td>
+                                <td class="p-4 text-xs font-mono">অ্যাকশনএইড / ইউএনডিপি রিপোর্ট</td>
+                                <td class="p-4 text-xs text-slate-400">নারীর গতিশীলতা সীমিত হওয়া ও অর্থনৈতিক অংশগ্রহণ হ্রাস পাওয়া</td>
+                            </tr>
+                            <tr class="hover:bg-white/[0.02] transition-colors bg-rose-500/5">
+                                <td class="p-4 font-medium text-rose-300">আনুষ্ঠানিক আইনি সহায়তা গ্রহণকারী</td>
+                                <td class="p-4 font-mono font-bold text-red-500 text-base">০.০%</td>
+                                <td class="p-4 text-xs font-mono">বাড্ডা ট্রানজিট সেফটি স্টাডি</td>
+                                <td class="p-4 text-xs text-slate-400">পুলিশি সহযোগিতা ও বিচার ব্যবস্থার ওপর শতভাগ আস্থার অভাব</td>
+                            </tr>
+                        </tbody>
+                    </table>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- তুলনামূলক বিশ্লেষণ ম্যাট্রিক্স সেকশন -->
+    <section id="matrix" class="py-16 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-mono text-pink-400 uppercase tracking-widest">ধারা ০২ • প্রাতিষ্ঠানিক বিবর্তন</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-white mt-2">দোলনচাঁপা (২০১৮) বনাম বিআরটিসি পিংক বাস (২০২৬)</h2>
+                <p class="text-slate-400 text-sm mt-2">
+                    বেসরকারি উদ্যোগ ও সরকারি বিআরটিসি ১৮০ দিনের অগ্রাধিকার কর্মপরিকল্পনার তুলনামূলক মূল্যায়ন।
+                </p>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 gap-8">
+                <!-- দোলনচাঁপা কার্ড -->
+                <div class="glass-card p-6 rounded-2xl border-t-4 border-t-amber-500 relative">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-amber-500/10 border border-amber-500/30 text-amber-400 text-xs font-mono font-bold rounded-full">বেসরকারি খাত (২০১৮)</span>
+                        <span class="text-xs font-mono text-slate-400">র‌্যাংগস গ্রুপ ও ভিইসিভি</span>
+                    </div>
+                    <h3 class="text-2xl font-bold font-display text-white">দোলনচাঁপা বাস সার্ভিস</h3>
+                    <p class="text-xs text-slate-400 mt-1">২০১৮ সালের জুনে চালু হওয়া বাংলাদেশের প্রথম নারী-বান্ধব বাস সার্ভিস।</p>
+
+                    <div class="mt-6 space-y-4 text-sm">
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-white/5">
+                            <span class="text-slate-400">পরিচালনাকারী সত্তা:</span>
+                            <span class="font-semibold text-white">বেসরকারি খাত (র‌্যাংগস গ্রুপ)</span>
+                        </div>
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-white/5">
+                            <span class="text-slate-400">প্রাথমিক বহর:</span>
+                            <span class="font-semibold text-amber-400">২টি বাস (পরে ৪টি পর্যন্ত বর্ধিত)</span>
+                        </div>
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-white/5">
+                            <span class="text-slate-400">কর্মীবাহিনী মডেল:</span>
+                            <span class="font-semibold text-white">পুরুষ চালক, নারী হেলপার</span>
+                        </div>
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-white/5">
+                            <span class="text-slate-400">যানবাহনের ধরন:</span>
+                            <span class="font-semibold text-white">নন-এসি মাঝারি সিঙ্গেল ডেকার</span>
+                        </div>
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-white/5">
+                            <span class="text-slate-400">ডিজিটাল প্রযুক্তি:</span>
+                            <span class="font-semibold text-slate-300">সিসিটিভি, ফার্স্ট এইড, মোবাইল অ্যাপ</span>
+                        </div>
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-white/5">
+                            <span class="text-slate-400">ভাড়ার কাঠামো:</span>
+                            <span class="font-semibold text-amber-300">৫ টাকা থেকে ৩০ টাকা (ফ্ল্যাট/জোন)</span>
+                        </div>
+                    </div>
+                </div>
+
+                <!-- বিআরটিসি পিংক বাস কার্ড -->
+                <div class="glass-card p-6 rounded-2xl border-t-4 border-t-pink-500 relative shadow-xl shadow-pink-500/5">
+                    <div class="flex items-center justify-between mb-4">
+                        <span class="px-3 py-1 bg-pink-500/20 border border-pink-500/50 text-pink-300 text-xs font-mono font-bold rounded-full">রাষ্ট্রীয় সরকারি খাত (২০২৬)</span>
+                        <span class="text-xs font-mono text-pink-400">১৮০ দিনের অগ্রাধিকার প্রকল্প</span>
+                    </div>
+                    <h3 class="text-2xl font-bold font-display text-white">বিআরটিসি পিংক বাস সার্ভিস</h3>
+                    <p class="text-xs text-slate-400 mt-1">নির্বাচনী ইশতেহার ও রাষ্ট্রীয় পরিকল্পনার অধীনে আগস্ট ২০২৬-এ চালু হওয়া সেবা।</p>
+
+                    <div class="mt-6 space-y-4 text-sm">
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-pink-500/20">
+                            <span class="text-slate-400">পরিচালনাকারী সত্তা:</span>
+                            <span class="font-semibold text-white">রাষ্ট্রীয় পরিবহন সংস্থা (BRTC)</span>
+                        </div>
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-pink-500/20">
+                            <span class="text-slate-400">প্রাথমিক বহর:</span>
+                            <span class="font-semibold text-pink-400">১৪টি বাস (ঢাকা ১০, চট্টগ্রাম ২, বগুড়া ২)</span>
+                        </div>
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-pink-500/20">
+                            <span class="text-slate-400">কর্মীবাহিনী মডেল:</span>
+                            <span class="font-semibold text-purple-300">১০০% নারী চালক ও কন্ডাক্টর</span>
+                        </div>
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-pink-500/20">
+                            <span class="text-slate-400">যানবাহনের ধরন:</span>
+                            <span class="font-semibold text-white">একক ও দ্বিতল বিশিষ্ট (Double Decker)</span>
+                        </div>
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-pink-500/20">
+                            <span class="text-slate-400">ডিজিটাল প্রযুক্তি:</span>
+                            <span class="font-semibold text-pink-300">পিওএস টিকিটিং, সিসিটিভি, ভিটিএস, ওয়াই-ফাই</span>
+                        </div>
+                        <div class="flex justify-between p-3 rounded-lg bg-obsidian-900/60 border border-pink-500/20">
+                            <span class="text-slate-400">ভাড়ার কাঠামো:</span>
+                            <span class="font-semibold text-emerald-400">প্রতি কিমি ২.২৩ টাকা (বিআরটিএ রেট)</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- অনবোর্ড প্রযুক্তি সুবিধা হাইলাইট -->
+            <div class="mt-12 glass-card p-6 rounded-2xl">
+                <h4 class="text-xs font-mono text-slate-400 uppercase tracking-wider mb-4">বিআরটিসি পিংক বাসের ডিজিটাল প্রযুক্তি ও সুরক্ষা অবকাঠামো</h4>
+                <div class="grid grid-cols-1 sm:grid-cols-2 lg:grid-cols-4 gap-4">
+                    <div class="p-4 rounded-xl bg-obsidian-900 border border-white/5 flex items-start gap-3">
+                        <div class="p-2 bg-pink-500/10 text-pink-400 rounded-lg shrink-0">
+                            <i data-lucide="credit-card" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-white text-sm block">ডিজিটাল পিওএস ই-টিকিট</span>
+                            <span class="text-xs text-slate-400">সহজ.কম (Shohoz)-এর সহযোগিতায় ভাড়া কারচুপি ও বিতর্ক রোধ।</span>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-obsidian-900 border border-white/5 flex items-start gap-3">
+                        <div class="p-2 bg-purple-500/10 text-purple-400 rounded-lg shrink-0">
+                            <i data-lucide="map-pin" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-white text-sm block">ভেহিকল ট্র্যাকিং (VTS)</span>
+                            <span class="text-xs text-slate-400">বাসের রিয়েল-টাইম অবস্থান, রুট মেনে চলা ও গতি পর্যবেক্ষণ।</span>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-obsidian-900 border border-white/5 flex items-start gap-3">
+                        <div class="p-2 bg-blue-500/10 text-blue-400 rounded-lg shrink-0">
+                            <i data-lucide="video" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-white text-sm block">সিসিটিভি নজরদারি</span>
+                            <span class="text-xs text-slate-400">বাসের ভেতরে ক্যামেরা রেকর্ডিংয়ের মাধ্যমে অপ্রীতিকর ঘটনা প্রতিরোধ।</span>
+                        </div>
+                    </div>
+                    <div class="p-4 rounded-xl bg-obsidian-900 border border-white/5 flex items-start gap-3">
+                        <div class="p-2 bg-cyan-500/10 text-cyan-400 rounded-lg shrink-0">
+                            <i data-lucide="wifi" class="w-5 h-5"></i>
+                        </div>
+                        <div>
+                            <span class="font-semibold text-white text-sm block">স্টারলিঙ্ক ওয়াই-ফাই</span>
+                            <span class="text-xs text-slate-400">পরীক্ষামূলকভাবে উচ্চগতির উপগ্রহ ওয়াই-ফাই সেবা চালু।</span>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- নারী কর্মীবাহিনীর রূপান্তর সেকশন -->
+    <section id="workforce" class="py-16 bg-obsidian-800/40 border-y border-white/5 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-5">
+                    <span class="text-xs font-mono text-pink-400 uppercase tracking-widest">ধারা ০৩ • কর্মসংস্থান রূপান্তর</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-white mt-2">১০০% নারী ক্রু চালিত মডেল</h2>
+                    <p class="text-slate-300 text-sm mt-4 leading-relaxed">
+                        ঐতিহাসিকভাবে পুরুষতান্ত্রিক পরিবহন খাতে অভূতপূর্ব পরিবর্তন এনে ২০২৬ সালে বিআরটিসি ভারি যান চালানোর জন্য পেশাদার নারী চালক ও কন্ডাক্টর নিয়োগ দেয়।
+                    </p>
+
+                    <div class="mt-6 space-y-3 font-mono text-xs">
+                        <div class="flex items-center space-x-3 p-3 rounded-lg bg-obsidian-900 border border-white/10">
+                            <i data-lucide="award" class="w-5 h-5 text-pink-400 shrink-0"></i>
+                            <div>
+                                <span class="text-white font-bold">১৫ জন চালক ও ২৪ জন কন্ডাক্টর</span>
+                                <span class="block text-slate-400">আগস্ট ২০২৬ এ সার্ভিসের যাত্রাকালে নিয়োজিত</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 rounded-lg bg-obsidian-900 border border-white/10">
+                            <i data-lucide="graduation-cap" class="w-5 h-5 text-purple-400 shrink-0"></i>
+                            <div>
+                                <span class="text-white font-bold">শিক্ষাগত যোগ্যতা: এইচএসসি বা সমমান</span>
+                                <span class="block text-slate-400">পূর্বে হালকা গাড়ি চালানোর অভিজ্ঞতা সম্পন্ন</span>
+                            </div>
+                        </div>
+                        <div class="flex items-center space-x-3 p-3 rounded-lg bg-obsidian-900 border border-white/10">
+                            <i data-lucide="wrench" class="w-5 h-5 text-amber-400 shrink-0"></i>
+                            <div>
+                                <span class="text-white font-bold">১.৫ থেকে ২ মাসের নিবিড় আবাসিক প্রশিক্ষণ</span>
+                                <span class="block text-slate-400">বিআরটিসি কেন্দ্রীয় প্রশিক্ষণ কেন্দ্র, গাজীপুর ডিপো</span>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+
+                <div class="lg:col-span-7">
+                    <!-- নারী চালকদের প্রোফাইল প্রদর্শনী -->
+                    <div class="glass-card p-6 rounded-2xl">
+                        <h3 class="font-display font-bold text-lg text-white mb-4 flex items-center justify-between">
+                            <span>অগ্রগামী নারী বাস চালকদের প্রোফাইল</span>
+                            <span class="text-xs font-mono text-pink-400">বিআরটিসি সার্টিফাইড</span>
+                        </h3>
+
+                        <div class="grid grid-cols-1 sm:grid-cols-2 gap-4">
+                            <div class="p-4 rounded-xl bg-obsidian-900/80 border border-white/10">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-full bg-pink-500/20 text-pink-400 flex items-center justify-center font-bold">
+                                        এসএফ
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white text-sm">এস কে ফামিহা সাদিয়া</h4>
+                                        <span class="text-xs text-pink-400 font-mono">বিআরটিসি বাস চালক</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-3">হালকা যান চালানো থেকে উত্তরণ ঘটিয়ে ঢাকার জনাকীর্ণ রুটে দ্বিতল ডাবল-ডেকার বাস পরিচালনা করছেন।</p>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-obsidian-900/80 border border-white/10">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-full bg-purple-500/20 text-purple-400 flex items-center justify-center font-bold">
+                                        কেআর
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white text-sm">খাদিজাতুল রিমা</h4>
+                                        <span class="text-xs text-purple-400 font-mono">বিআরটিসি বাস চালক</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-3">গাজীপুর প্রশিক্ষণ কেন্দ্র থেকে ভারি যান ড্রাইভিং ও সিগন্যালিংয়ে বিশেষ দক্ষতা অর্জনকারী।</p>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-obsidian-900/80 border border-white/10">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-full bg-blue-500/20 text-blue-400 flex items-center justify-center font-bold">
+                                        এমবি
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white text-sm">মমতাজ বেগম</h4>
+                                        <span class="text-xs text-blue-400 font-mono">চট্টগ্রাম রুট চালক</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-3">পেশাদার চালক স্বামীর অনুপ্রেরণায় কালুরঘাট-পতেঙ্গা রুটে ভারি বাস পরিচালনা করছেন।</p>
+                            </div>
+
+                            <div class="p-4 rounded-xl bg-obsidian-900/80 border border-white/10">
+                                <div class="flex items-center space-x-3">
+                                    <div class="w-10 h-10 rounded-full bg-amber-500/20 text-amber-400 flex items-center justify-center font-bold">
+                                        আরকে
+                                    </div>
+                                    <div>
+                                        <h4 class="font-bold text-white text-sm">মোছাঃ রাবেয়া খাতুন</h4>
+                                        <span class="text-xs text-amber-400 font-mono">চালক ও নিরাপত্তা বক্তা</span>
+                                    </div>
+                                </div>
+                                <p class="text-xs text-slate-400 mt-3">অতীতে বাসের হেলপার কর্তৃক হয়রানির শিকার হলেও পরবর্তীতে প্রশিক্ষণ নিয়ে বাসের চালক হন (বয়স ৩৮)।</p>
+                            </div>
+                        </div>
+
+                        <!-- পোশাক পরিচ্ছদ নোট -->
+                        <div class="mt-4 p-3 rounded-lg bg-pink-500/10 border border-pink-500/20 text-xs text-pink-300 flex items-center justify-between">
+                            <span><strong class="text-white">ইউনিফর্ম স্পেসিফিকেশন:</strong> প্রাতিষ্ঠানিক মর্যাদা রক্ষায় গোলাপী রঙের পেশাদার ইউনিফর্ম।</span>
+                            <i data-lucide="check-circle" class="w-4 h-4 text-pink-400"></i>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- রুট নেটওয়ার্ক ও স্টপেজ এক্সপ্লোরার সেকশন -->
+    <section id="routes" class="py-16 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex flex-col md:flex-row md:items-end justify-between mb-10">
+                <div>
+                    <span class="text-xs font-mono text-pink-400 uppercase tracking-widest">ধারা ০৪ • রুট ও ভৌগোলিক বিস্তৃতি</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-white mt-2">রুট নেটওয়ার্ক ও ১৩৪টি নির্ধারিত স্টপ</h2>
+                    <p class="text-slate-400 text-sm mt-1">
+                        ঢাকা মেট্রোপলিটন, চট্টগ্রাম মেট্রো এবং বগুড়া জেলাজুড়ে পিংক বাসের বিস্তৃত রুট।
+                    </p>
+                </div>
+
+                <!-- রুট ফিল্টার বোতামসমূহ -->
+                <div class="mt-4 md:mt-0 flex flex-wrap gap-2 font-mono text-xs">
+                    <button onclick="filterRoutes('all')" id="btn-all" class="route-tab px-4 py-2 rounded-lg bg-pink-600 text-white font-bold transition-all">সকল অঞ্চল</button>
+                    <button onclick="filterRoutes('dhaka')" id="btn-dhaka" class="route-tab px-4 py-2 rounded-lg bg-obsidian-800 text-slate-400 border border-white/10 hover:text-white transition-all">ঢাকা মেট্রো (১০৬ স্টপ)</button>
+                    <button onclick="filterRoutes('ctg')" id="btn-ctg" class="route-tab px-4 py-2 rounded-lg bg-obsidian-800 text-slate-400 border border-white/10 hover:text-white transition-all">চট্টগ্রাম (১২ স্টপ)</button>
+                    <button onclick="filterRoutes('bogra')" id="btn-bogra" class="route-tab px-4 py-2 rounded-lg bg-obsidian-800 text-slate-400 border border-white/10 hover:text-white transition-all">বগুড়া জেলা</button>
+                </div>
+            </div>
+
+            <!-- রুট কার্ডস গ্রিড -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6" id="route-cards-container">
+                <!-- কার্ড ১: নতুন বাজার থেকে মতিঝিল -->
+                <div class="route-card dhaka glass-card p-6 rounded-2xl border border-white/5">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-mono px-2.5 py-1 rounded bg-pink-500/10 text-pink-400 border border-pink-500/30">ঢাকা মেট্রো</span>
+                        <span class="text-xs font-mono text-slate-400">মতিঝিল ডিপো</span>
+                    </div>
+                    <h3 class="font-bold text-white text-lg font-display">নতুন বাজার ➔ মতিঝিল</h3>
+                    <p class="text-xs text-slate-400 mt-1">বাড্ডা, রামপুরা, মালিবাগ, কাকরাইল ও গুলিস্তান হয়ে</p>
+                    <hr class="my-4 border-white/10">
+                    <div class="space-y-2 text-xs font-mono">
+                        <div class="flex justify-between"><span class="text-slate-400">বাসের ধরন:</span><span class="text-white font-bold">ডাবল-ডেকার বাস</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">নির্ধারিত স্টপেজ:</span><span class="text-pink-400 font-bold">১০৬টি স্টপ নেটওয়ার্ক</span></div>
+                    </div>
+                </div>
+
+                <!-- কার্ড ২: মিরপুর ১০/১২ থেকে মতিঝিল -->
+                <div class="route-card dhaka glass-card p-6 rounded-2xl border border-white/5">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-mono px-2.5 py-1 rounded bg-pink-500/10 text-pink-400 border border-pink-500/30">ঢাকা মেট্রো</span>
+                        <span class="text-xs font-mono text-slate-400">কল্যাণপুর/মিরপুর ডিপো</span>
+                    </div>
+                    <h3 class="font-bold text-white text-lg font-display">মিরপুর (১০/১২) ➔ মতিঝিল</h3>
+                    <p class="text-xs text-slate-400 mt-1">ফার্মগেট, শাহবাগ, প্রেস ক্লাব ও গুলিস্তান হয়ে</p>
+                    <hr class="my-4 border-white/10">
+                    <div class="space-y-2 text-xs font-mono">
+                        <div class="flex justify-between"><span class="text-slate-400">বাসের ধরন:</span><span class="text-white font-bold">ডাবল-ডেকার বাস</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">জটলা কেন্দ্র:</span><span class="text-amber-400 font-bold">ফার্মগেট (২-৩ ঘণ্টা অপেক্ষা)</span></div>
+                    </div>
+                </div>
+
+                <!-- কার্ড ৩: মোহাম্মদপুর ও ডেমরা -->
+                <div class="route-card dhaka glass-card p-6 rounded-2xl border border-white/5">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-mono px-2.5 py-1 rounded bg-pink-500/10 text-pink-400 border border-pink-500/30">ঢাকা মেট্রো</span>
+                        <span class="text-xs font-mono text-slate-400">যাত্রাবাড়ী / মোহাম্মদপুর</span>
+                    </div>
+                    <h3 class="font-bold text-white text-lg font-display">মোহাম্মদপুর ও ডেমরা ➔ মতিঝিল/জিপিও</h3>
+                    <p class="text-xs text-slate-400 mt-1">ধানমন্ডি, সিটি কলেজ, শাহবাগ ও যাত্রাবাড়ী সংযোগ</p>
+                    <hr class="my-4 border-white/10">
+                    <div class="space-y-2 text-xs font-mono">
+                        <div class="flex justify-between"><span class="text-slate-400">বহর বন্টন:</span><span class="text-white font-bold">সম্মিলিত বিআরটিসি বহর</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">লক্ষ্যভিত্তিক যাত্রী:</span><span class="text-white font-bold">গার্মেন্টস ও অফিসজীবী নারী</span></div>
+                    </div>
+                </div>
+
+                <!-- কার্ড ৪: বৃহত্তর ঢাকা করিডোর -->
+                <div class="route-card dhaka glass-card p-6 rounded-2xl border border-white/5">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-mono px-2.5 py-1 rounded bg-pink-500/10 text-pink-400 border border-pink-500/30">বৃহত্তর ঢাকা</span>
+                        <span class="text-xs font-mono text-slate-400">গাজীপুর ও নারায়ণগঞ্জ</span>
+                    </div>
+                    <h3 class="font-bold text-white text-lg font-display">গাজীপুর ➔ বিমানবন্দর ও নারায়ণগঞ্জ</h3>
+                    <p class="text-xs text-slate-400 mt-1">শিল্পাঞ্চলের তৈরি পোশাক খাতের নারী শ্রমিকদের যাতায়াত রুট</p>
+                    <hr class="my-4 border-white/10">
+                    <div class="space-y-2 text-xs font-mono">
+                        <div class="flex justify-between"><span class="text-slate-400">করিডোর ব্যাপ্তি:</span><span class="text-white font-bold">গাজীপুর চৌরাস্তা থেকে বিমানবন্দর</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">প্রাথমিক লক্ষ্য:</span><span class="text-emerald-400 font-bold">আরএমজি নারী শ্রমিক নিরাপত্তা</span></div>
+                    </div>
+                </div>
+
+                <!-- কার্ড ৫: চট্টগ্রাম মেট্রো -->
+                <div class="route-card ctg glass-card p-6 rounded-2xl border border-white/5">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-mono px-2.5 py-1 rounded bg-purple-500/10 text-purple-400 border border-purple-500/30">চট্টগ্রাম মেট্রো</span>
+                        <span class="text-xs font-mono text-slate-400">চট্টগ্রাম ডিপো</span>
+                    </div>
+                    <h3 class="font-bold text-white text-lg font-display">কালুরঘাট বেতার কেন্দ্র ➔ পতেঙ্গা</h3>
+                    <p class="text-xs text-slate-400 mt-1">বহদ্দারহাট, জিইসি, আগ্রাবাদ ও ফ্রিপোর্ট হয়ে ২২-২৫ কিমি বন্দরনগরী রুট</p>
+                    <hr class="my-4 border-white/10">
+                    <div class="space-y-2 text-xs font-mono">
+                        <div class="flex justify-between"><span class="text-slate-400">বাসের সংখ্যা:</span><span class="text-purple-300 font-bold">২টি সিঙ্গেল-ডেকার বাস</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">নির্ধারিত স্টপ:</span><span class="text-purple-400 font-bold">১২টি গুরুত্বপূর্ণ স্টপেজ</span></div>
+                    </div>
+                </div>
+
+                <!-- কার্ড ৬: বগুড়া জেলা -->
+                <div class="route-card bogra glass-card p-6 rounded-2xl border border-white/5">
+                    <div class="flex justify-between items-center mb-3">
+                        <span class="text-xs font-mono px-2.5 py-1 rounded bg-amber-500/10 text-amber-400 border border-amber-500/30">বগুড়া জেলা</span>
+                        <span class="text-xs font-mono text-slate-400">বগুড়া ডিপো</span>
+                    </div>
+                    <h3 class="font-bold text-white text-lg font-display">শেরপুর ➔ মাটিডালি ও মোকামতলা ➔ সাতমাথা</h3>
+                    <p class="text-xs text-slate-400 mt-1">আরডিএ স্কুল, মাঝিরা, বনানী, সাতমাথা ও সরকারি মহিলা কলেজ সংযোগ</p>
+                    <hr class="my-4 border-white/10">
+                    <div class="space-y-2 text-xs font-mono">
+                        <div class="flex justify-between"><span class="text-slate-400">বাসের সংখ্যা:</span><span class="text-amber-300 font-bold">২টি সিঙ্গেল-ডেকার বাস</span></div>
+                        <div class="flex justify-between"><span class="text-slate-400">প্রধান যাত্রী:</span><span class="text-amber-400 font-bold">কলেজ ও বিশ্ববিদ্যালয় ছাত্রী</span></div>
+                    </div>
+                </div>
+            </div>
+
+            <!-- সরবরাহের ঘাটতি সংক্রান্ত সতর্কতা -->
+            <div class="mt-8 bg-amber-500/10 border border-amber-500/30 rounded-xl p-5 flex items-start gap-4">
+                <i data-lucide="alert-circle" class="w-6 h-6 text-amber-400 shrink-0 mt-1"></i>
+                <div class="text-sm">
+                    <h4 class="font-bold text-white">চাহিদা ও যোগানের সংকট: দীর্ঘ অপেক্ষার সময়</h4>
+                    <p class="text-slate-300 text-xs mt-1 leading-relaxed">
+                        ঢাকা শহরের মতো বিশাল মেগাসিটিতে ১০টি বাস অপ্রতুল। ফার্মগেট, মিরপুর ও মতিঝিলের মতো ব্যস্ত কেন্দ্রে নারী যাত্রীদের বাসের জন্য <strong>২ থেকে ৩ ঘণ্টা</strong> পর্যন্ত অপেক্ষা করতে হয়। যাত্রার শুরুর স্টপেজেই বাস পূর্ণ হয়ে যাওয়ায় মধ্যবর্তী স্টপেজে দাঁড়িয়ে থাকা নারী যাত্রীরা বাসে উঠতে পারেন না।
+                    </p>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- সামাজিক-মনস্তাত্ত্বিক কারণ ও সহযাত্রীদের ভূমিকা -->
+    <section class="py-16 bg-obsidian-800/50 border-y border-white/5 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="grid lg:grid-cols-12 gap-12 items-center">
+                <div class="lg:col-span-6">
+                    <span class="text-xs font-mono text-pink-400 uppercase tracking-widest">ধারা ০৫ • সামাজিক আচরণধারা</span>
+                    <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-white mt-2">সহযাত্রীদের নিষ্ক্রিয়তার ব্যবধান (Bystander Gap)</h2>
+                    <p class="text-slate-300 text-sm mt-3 leading-relaxed">
+                        ব্র্যাক, বিহেভিয়ারাল ইনসাইটস টিম (BIT) এবং বিআরটিসির যৌথ গবেষণায় দেখা গেছে হয়রানির বিরুদ্ধে প্রতিবাদ করার ইচ্ছা থাকা সত্ত্বেও বাস্তবে প্রত্যক্ষদর্শীরা এগিয়ে আসেন না।
+                    </p>
+
+                    <div class="mt-6 glass-card p-6 rounded-2xl">
+                        <div class="h-60 relative">
+                            <canvas id="bystanderGapChart"></canvas>
+                        </div>
+                        <div class="mt-4 p-3 rounded-lg bg-amber-500/10 border border-amber-500/20 text-xs text-amber-300">
+                            <strong>৭০% নিষ্ক্রিয়তার মূল কারণ:</strong> বাইস্ট্যান্ডার ইফেক্ট বা অনীহা, বখাটেদের আক্রমণের ভয় এবং ভুক্তভোগী নারীর নীরবতাকে সম্মতির ভুল ব্যাখ্যা দেওয়া।
+                        </div>
+                    </div>
+                </div>
+
+                <!-- বাসের ভেতরের মানসিক পরিবেশের তুলনা -->
+                <div class="lg:col-span-6">
+                    <h3 class="font-display font-bold text-lg text-white mb-4">বাসের অভ্যন্তরীণ পরিবেশ ও মনস্তাত্ত্বিক অবস্থার তুলনা</h3>
+                    <div class="space-y-4 text-xs">
+                        <div class="p-4 rounded-xl bg-obsidian-900 border border-rose-500/20">
+                            <div class="flex items-center justify-between text-rose-400 font-bold mb-2">
+                                <span class="uppercase font-mono">সাধারণ বাণিজ্যিক বাস (মিক্সড জেন্ডার)</span>
+                                <i data-lucide="x-circle" class="w-4 h-4"></i>
+                            </div>
+                            <ul class="space-y-1.5 text-slate-300">
+                                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> <strong>মানসিক অবস্থা:</strong> চরম দুশ্চিন্তা, মানসিক ক্লান্তি, আত্মরক্ষামূলক ভঙ্গি</li>
+                                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> <strong>ভেতরের আচরণ:</strong> গাদাগাদি ভিড়ে সীমানা রক্ষা করা, সার্বক্ষণিক সজাগ থাকা</li>
+                                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> <strong>হয়রানির ঝুঁকি:</strong> স্পর্শ, ধাক্কা দেওয়া বা শারীরিক উত্ত্যক্তকরণের উচ্চ ঝুঁকি</li>
+                                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-rose-500"></span> <strong>ক্রু আচরণ:</strong> বাসের হেলপার ও কন্ডাক্টরদের অশালীন ও আক্রমণাত্মক আচরণ</li>
+                            </ul>
+                        </div>
+
+                        <div class="p-4 rounded-xl bg-obsidian-900 border border-pink-500/40">
+                            <div class="flex items-center justify-between text-pink-400 font-bold mb-2">
+                                <span class="uppercase font-mono">বিআরটিসি নারী-বান্ধব পিংক বাস</span>
+                                <i data-lucide="check-circle-2" class="w-4 h-4"></i>
+                            </div>
+                            <ul class="space-y-1.5 text-slate-300">
+                                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span> <strong>মানসিক অবস্থা:</strong> স্বস্তি, আরাম, নিরাপদ অনুভূতি, যাতায়াতে মানসিক বিশ্রাম</li>
+                                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span> <strong>ভেতরের আচরণ:</strong> নিশ্চিন্তে বই পড়া, ফোন ব্যবহার, বিশ্রাম বা গান শোনা</li>
+                                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span> <strong>হয়রানির ঝুঁকি:</strong> বাসের ভেতরে পুরুষজনিত যৌন হয়রানির শূন্য ঝুঁকি</li>
+                                <li class="flex items-center gap-2"><span class="w-1.5 h-1.5 rounded-full bg-pink-500"></span> <strong>ক্রু আচরণ:</strong> বন্ধুত্বপূর্ণ নারী কন্ডাক্টর ও পারস্পরিক নিরাপদ পরিবেশ</li>
+                            </ul>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- কৌশলগত পলিসি রোডম্যাপ ও সার্বিক মূল্যায়ন -->
+    <section id="policy" class="py-16 relative">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="text-center max-w-3xl mx-auto mb-12">
+                <span class="text-xs font-mono text-pink-400 uppercase tracking-widest">ধারা ০৬ • নীতিগত রোডম্যাপ</span>
+                <h2 class="text-2xl sm:text-3xl font-extrabold font-display text-white mt-2">নীতিগত সুপারিশ ও দীর্ঘমেয়াদী কৌশল</h2>
+                <p class="text-slate-400 text-sm mt-2">
+                    পিংক বাস সেবাটিকে সীমিত উদ্যোগ থেকে একটি টেকসই নগর পরিবহন কাঠামোয় রূপান্তরের পদক্ষেপ।
+                </p>
+            </div>
+
+            <!-- ৪টি কৌশলগত পলিসি কার্ড -->
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-4 gap-6">
+                <div class="glass-card p-6 rounded-2xl border-t-2 border-t-pink-500">
+                    <span class="text-xs font-mono text-pink-400 block mb-2">০১ • বহর সম্প্রসারণ</span>
+                    <h3 class="font-bold text-white text-base font-display">ইলেকট্রিক বাস সংযোজন</h3>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        জ্বালানি খরচ কমাতে কোইকা (KOICA) বা বিশ্বব্যাংকের সহায়তায় দ্রুত ১০০–২০০টি ই-বাস ( ৩ মাসের মধ্যে ৫০টি) পিংক বাস বহরে যুক্ত করা।
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border-t-2 border-t-purple-500">
+                    <span class="text-xs font-mono text-purple-400 block mb-2">০২ • নেটওয়ার্ক সমন্বয়</span>
+                    <h3 class="font-bold text-white text-base font-display">মেট্রোরেল স্টেশন সংযোগ</h3>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        মেট্রোরেল (MRT Line 6) স্টেশন এবং আন্তঃজেলা টার্মিনালের সাথে পিংক বাসের সময়সূচি ডাইনামিক অ্যাপের মাধ্যমে সমন্বয় করা।
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border-t-2 border-t-blue-500">
+                    <span class="text-xs font-mono text-blue-400 block mb-2">০৩ • স্টপেজ অবকাঠামো</span>
+                    <h3 class="font-bold text-white text-base font-display">১৩৪টি স্টপেজে আলো ও ক্যামেরা</h3>
+                    <p class="text-xs text-slate-400 mt-1 leading-relaxed">
+                        ১৩৪টি স্টপেজে পর্যাপ্ত আলো, সিসিটিভি ক্যামেরা, এমার্জেন্সি কল বক্স এবং ট্রাফিক পুলিশ/নিরাপত্তাকর্মী মোতায়েন করা।
+                    </p>
+                </div>
+
+                <div class="glass-card p-6 rounded-2xl border-t-2 border-t-emerald-500">
+                    <span class="text-xs font-mono text-emerald-400 block mb-2">০৪ • আইনি প্রয়োগ</span>
+                    <h3 class="font-bold text-white text-base font-display">পোস্টার ও মোবাইল কোর্ট</h3>
+                    <p class="text-xs text-slate-400 mt-2 leading-relaxed">
+                        সহযাত্রীদের প্রতিবাদের ৩-ধাপের গাইডলাইন পোস্টার এবং সাধারণ বাসে হয়রানি বন্ধে নিয়মিত ভ্রাম্যমাণ আদালত পরিচালনা করা।
+                    </p>
+                </div>
+            </div>
+
+            <!-- সার্বিক মূল্যায়ন বক্স -->
+            <div class="mt-12 glass-card p-8 rounded-3xl border border-pink-500/30 relative overflow-hidden">
+                <div class="absolute top-0 right-0 w-64 h-64 bg-pink-500/10 rounded-full filter blur-3xl pointer-events-none"></div>
+                
+                <div class="relative z-10">
+                    <div class="flex items-center space-x-3 mb-4">
+                        <i data-lucide="scale" class="w-6 h-6 text-pink-400"></i>
+                        <h3 class="text-xl sm:text-2xl font-bold font-display text-white">প্রতিবেদনের সার্বিক সিদ্ধান্ত ও রায়</h3>
+                    </div>
+
+                    <div class="grid md:grid-cols-3 gap-6 text-sm text-slate-300">
+                        <div class="p-4 rounded-xl bg-obsidian-900/80 border border-white/10">
+                            <h4 class="font-bold text-pink-400 text-xs font-mono uppercase mb-1">০১. তাৎক্ষণিক নিরাপত্তা</h4>
+                            <p class="text-xs">যেখানে ৯৪% নারী সাধারণ বাসে হয়রানির শিকার হন, সেখানে এই বাস সার্ভিসটি নারী যাত্রীদের শারীরিক সুরক্ষা ও স্বস্তি নিশ্চিত করে।</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-obsidian-900/80 border border-white/10">
+                            <h4 class="font-bold text-purple-400 text-xs font-mono uppercase mb-1">০২. শ্রমশক্তির নজির</h4>
+                            <p class="text-xs">পেশাদার নারী চালক ও কন্ডাক্টর নিয়োগের মাধ্যমে পুরুষতান্ত্রিক পরিবহন খাতে নারীদের ক্ষমতায়নের একটি শক্ত দৃষ্টান্ত তৈরি হয়েছে।</p>
+                        </div>
+                        <div class="p-4 rounded-xl bg-obsidian-900/80 border border-white/10">
+                            <h4 class="font-bold text-amber-400 text-xs font-mono uppercase mb-1">০৩. আংশিক স্বস্তি বনাম সংস্কার</h4>
+                            <p class="text-xs">সীমিত বাসের সংখ্যা মূল সমস্যার পূর্ণ সমাধান নয়। সাধারণ বাসে অপরাধীদের শাস্তি প্রদান ও সার্বিক ব্যবস্থা সংস্কার ছাড়া দীর্ঘমেয়াদী সমাধান সম্ভব নয়।</p>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- তথ্যসূত্র সেকশন (Works Cited) -->
+    <section id="sources" class="py-16 bg-obsidian-800/60 border-t border-white/10">
+        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8">
+            <div class="flex items-center justify-between mb-8">
+                <div>
+                    <span class="text-xs font-mono text-pink-400 uppercase tracking-widest">ধারা ০৭ • রেফারেন্স লাইব্রেরি</span>
+                    <h2 class="text-xl sm:text-2xl font-bold font-display text-white mt-1">তথ্যসূত্র ও গবেষণাপত্রসমূহ</h2>
+                </div>
+                <span class="text-xs font-mono text-slate-400">১৫টি মূল ডকুমেন্টেশন লিংক</span>
+            </div>
+
+            <div class="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-4 text-xs">
+                <!-- উৎস ১ -->
+                <div class="glass-card p-4 rounded-xl border border-white/5 hover:border-pink-500/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <span class="text-slate-400 font-mono text-[10px] block">ঢাকা ট্রিবিউন • আগস্ট ২০২৬</span>
+                        <h4 class="font-bold text-white text-sm mt-1">নারী-বান্ধব 'পিংক বাস' সার্ভিসের উদ্বোধন</h4>
+                    </div>
+                    <a href="https://www.dhakatribune.com/bangladesh/dhaka/417804/women-only-%E2%80%98pink-bus%E2%80%99-service-launched" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center space-x-1.5 text-pink-400 hover:text-pink-300 font-mono font-semibold">
+                        <span>মূল রিপোর্ট দেখুন</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+                <!-- উৎস ২ -->
+                <div class="glass-card p-4 rounded-xl border border-white/5 hover:border-pink-500/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <span class="text-slate-400 font-mono text-[10px] block">RSIS ইন্টারন্যাশনাল</span>
+                        <h4 class="font-bold text-white text-sm mt-1">ঢাকা বাড্ডা এলাকায় গণপরিবহনে যৌন হয়রানি সংক্রান্ত গবেষণা</h4>
+                    </div>
+                    <a href="https://rsisinternational.org/journals/ijriss/articles/a-study-on-sexual-harassment-against-women-in-public-transport-dhaka-city-badda-area/" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center space-x-1.5 text-pink-400 hover:text-pink-300 font-mono font-semibold">
+                        <span>গবেষণাপত্র দেখুন</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+                <!-- উৎস ৩ -->
+                <div class="glass-card p-4 rounded-xl border border-white/5 hover:border-pink-500/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <span class="text-slate-400 font-mono text-[10px] block">ডেইলি স্টার • জুন ২০১৮</span>
+                        <h4 class="font-bold text-white text-sm mt-1">নারী বাস সার্ভিস 'দোলনচাঁপা' উদ্বোধন</h4>
+                    </div>
+                    <a href="https://www.thedailystar.net/city/dolonchapa-women-only-bus-service-launched-1585603" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center space-x-1.5 text-pink-400 hover:text-pink-300 font-mono font-semibold">
+                        <span>সংবাদ প্রতিবেদন দেখুন</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+                <!-- উৎস ৪ -->
+                <div class="glass-card p-4 rounded-xl border border-white/5 hover:border-pink-500/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <span class="text-slate-400 font-mono text-[10px] block">বাসস নিউজ • আগস্ট ২০২৬</span>
+                        <h4 class="font-bold text-white text-sm mt-1">বিআরটিসির 'পিংক বাস সার্ভিস' চালুর সংবাদ</h4>
+                    </div>
+                    <a href="https://www.bssnews.net/news-flash/415354" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center space-x-1.5 text-pink-400 hover:text-pink-300 font-mono font-semibold">
+                        <span>প্রেস রিলিজ দেখুন</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+                <!-- উৎস ৫ -->
+                <div class="glass-card p-4 rounded-xl border border-white/5 hover:border-pink-500/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <span class="text-slate-400 font-mono text-[10px] block">ব্র্যাক বাংলাদেশ</span>
+                        <h4 class="font-bold text-white text-sm mt-1">গণপরিবহনে ৯৪% নারী হয়রানির শিকার: ব্র্যাক স্টাডি</h4>
+                    </div>
+                    <a href="https://www.brac.net/stay-informed/news/94-women-victims-of-sexual-harassment-in-public-transport/" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center space-x-1.5 text-pink-400 hover:text-pink-300 font-mono font-semibold">
+                        <span>ব্র্যাক সমীক্ষা দেখুন</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+                <!-- উৎস ৬ -->
+                <div class="glass-card p-4 rounded-xl border border-white/5 hover:border-pink-500/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <span class="text-slate-400 font-mono text-[10px] block">বিজনেস স্ট্যান্ডার্ড • আগস্ট ২০২৬</span>
+                        <h4 class="font-bold text-white text-sm mt-1">ঢাকা, চট্টগ্রাম ও বগুড়ায় পিংক বাস সার্ভিস শুরু</h4>
+                    </div>
+                    <a href="https://www.tbsnews.net/bangladesh/brtc-launches-pink-bus-service-women-today-1518171" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center space-x-1.5 text-pink-400 hover:text-pink-300 font-mono font-semibold">
+                        <span>টিবিএস রিপোর্ট দেখুন</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+                <!-- উৎস ৭ -->
+                <div class="glass-card p-4 rounded-xl border border-white/5 hover:border-pink-500/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <span class="text-slate-400 font-mono text-[10px] block">ডেইলি স্টার ফিচার</span>
+                        <h4 class="font-bold text-white text-sm mt-1">পিংক বাস: বাসের ড্রাইভিং সিটে এবার নারীরা</h4>
+                    </div>
+                    <a href="https://www.thedailystar.net/news/bangladesh/news/pink-bus-puts-women-the-driving-seat-4251046" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center space-x-1.5 text-pink-400 hover:text-pink-300 font-mono font-semibold">
+                        <span>নারী চালকদের ফিচার দেখুন</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+                <!-- উৎস ৮ -->
+                <div class="glass-card p-4 rounded-xl border border-white/5 hover:border-pink-500/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <span class="text-slate-400 font-mono text-[10px] block">ব্র্যাক দি গুড ফিড</span>
+                        <h4 class="font-bold text-white text-sm mt-1">সহযাত্রীদের সচেতনতায় বিহেভিয়ারাল নজ পোস্টার</h4>
+                    </div>
+                    <a href="https://www.brac.net/stay-informed/the-good-feed/nudging-bystanders-to-fight-sexual-harassment-make-perpetrators-think-twice/" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center space-x-1.5 text-pink-400 hover:text-pink-300 font-mono font-semibold">
+                        <span>গবেষণা দেখুন</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+
+                <!-- উৎস ৯ -->
+                <div class="glass-card p-4 rounded-xl border border-white/5 hover:border-pink-500/30 transition-all flex flex-col justify-between">
+                    <div>
+                        <span class="text-slate-400 font-mono text-[10px] block">ইউএনডিপি প্রচারপত্র</span>
+                        <h4 class="font-bold text-white text-sm mt-1">গণপরিসরে নারীদের নিরাপত্তা ক্যাম্পেইন ফ্লাইয়ার</h4>
+                    </div>
+                    <a href="https://www.undp.org/sites/g/files/zskgke326/files/2023-03/Flyer-%20Women%27s%20Safety%20in%20Public%20Places%20Campaign.pdf" target="_blank" rel="noopener noreferrer" class="mt-3 inline-flex items-center space-x-1.5 text-pink-400 hover:text-pink-300 font-mono font-semibold">
+                        <span>ইউএনডিপি পিডিএফ</span>
+                        <i data-lucide="external-link" class="w-3.5 h-3.5"></i>
+                    </a>
+                </div>
+            </div>
+        </div>
+    </section>
+
+    <!-- ফুটার -->
+    <footer class="py-8 bg-obsidian-900 border-t border-white/10 text-center text-xs text-slate-400">
+        <div class="max-w-7xl mx-auto px-4 flex flex-col sm:flex-row items-center justify-between gap-4">
+            <div class="flex items-center space-x-2">
+                <span class="w-2 h-2 rounded-full bg-pink-500"></span>
+                <span class="font-mono text-slate-300">এপেক্সক্রাফট স্টুডিও ডিজিটাল প্ল্যাটফর্ম</span>
+            </div>
+            <p>বাংলাদেশ পিংক বাস সার্ভিস রিপোর্ট (২০২৬)-এর পূর্ণাঙ্গ বাংলা সংস্করণ</p>
+            <a href="#overview" class="text-pink-400 hover:underline font-mono">উপরে যান ↑</a>
+        </div>
+    </footer>
+
+    <!-- ইন্টারেক্টিভ জাভাস্ক্রিপ্ট -->
+    <script>
+        // লুসাইড আইকন প্রারম্ভিকরণ
+        lucide.createIcons();
+
+        // মোবাইল মেনু টগল
+        const menuBtn = document.getElementById('mobile-menu-btn');
+        const mobileMenu = document.getElementById('mobile-menu');
+        menuBtn.addEventListener('click', () => {
+            mobileMenu.classList.toggle('hidden');
+        });
+
+        // রুট ফিল্টারিং ফাংশন
+        function filterRoutes(category) {
+            const cards = document.querySelectorAll('.route-card');
+            const tabs = document.querySelectorAll('.route-tab');
+
+            tabs.forEach(tab => {
+                tab.classList.remove('bg-pink-600', 'text-white', 'font-bold');
+                tab.classList.add('bg-obsidian-800', 'text-slate-400');
+            });
+
+            const activeBtn = document.getElementById(`btn-${category}`);
+            if (activeBtn) {
+                activeBtn.classList.remove('bg-obsidian-800', 'text-slate-400');
+                activeBtn.classList.add('bg-pink-600', 'text-white', 'font-bold');
+            }
+
+            cards.forEach(card => {
+                if (category === 'all') {
+                    card.style.display = 'block';
+                } else {
+                    if (card.classList.contains(category)) {
+                        card.style.display = 'block';
+                    } else {
+                        card.style.display = 'none';
+                    }
+                }
+            });
+        }
+
+        // বাংলা ফন্টে চার্ট রেন্ডারিং
+        window.addEventListener('DOMContentLoaded', () => {
+            // চার্ট ১: ভুক্তভোগী নারীদের প্রতিক্রিয়া
+            const ctxVictim = document.getElementById('victimActionsChart').getContext('2d');
+            new Chart(ctxVictim, {
+                type: 'bar',
+                data: {
+                    labels: [
+                        'নীরব থাকা / কোনো ব্যবস্থা না নেওয়া',
+                        'বাসের ভেতরে স্থান পরিবর্তন করা',
+                        'মৌখিকভাবে প্রতিবাদ করা',
+                        'ধর্মীয় পোশাক (হিজাব) গ্রহণ',
+                        'সরাসরি শারীরিক আত্মরক্ষা',
+                        'আইনি অভিযোগ দায়ের'
+                    ],
+                    datasets: [{
+                        label: 'হার (%)',
+                        data: [81.0, 79.0, 55.0, 46.0, 14.0, 0.0],
+                        backgroundColor: [
+                            'rgba(236, 72, 153, 0.85)',
+                            'rgba(168, 85, 247, 0.85)',
+                            'rgba(245, 158, 11, 0.85)',
+                            'rgba(59, 130, 246, 0.85)',
+                            'rgba(239, 68, 68, 0.85)',
+                            'rgba(100, 116, 139, 0.5)'
+                        ],
+                        borderWidth: 0,
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    indexAxis: 'y',
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return context.raw + '% ভুক্তভোগী নারী'; }
+                            }
+                        }
+                    },
+                    scales: {
+                        x: {
+                            max: 100,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94a3b8', font: { family: 'Space Grotesk' } }
+                        },
+                        y: {
+                            grid: { display: false },
+                            ticks: { color: '#f8fafc', font: { family: 'Hind Siliguri', size: 12 } }
+                        }
+                    }
+                }
+            });
+
+            // চার্ট ২: অপরাধীদের বয়স
+            const ctxAge = document.getElementById('perpetratorAgeChart').getContext('2d');
+            new Chart(ctxAge, {
+                type: 'doughnut',
+                data: {
+                    labels: ['৪১ - ৬০ বছর বয়সী', '২৬ - ৪০ বছর বয়সী', 'অন্যান্য বয়স'],
+                    datasets: [{
+                        data: [66.0, 59.0, 25.0],
+                        backgroundColor: [
+                            '#ec4899',
+                            '#a855f7',
+                            '#334155'
+                        ],
+                        borderWidth: 2,
+                        borderColor: '#0f111a'
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: {
+                            position: 'bottom',
+                            labels: { color: '#cbd5e1', font: { family: 'Hind Siliguri', size: 12 }, padding: 15 }
+                        }
+                    },
+                    cutout: '65%'
+                }
+            });
+
+            // চার্ট ৩: সহযাত্রীদের অনীহার ব্যবধান
+            const ctxBystander = document.getElementById('bystanderGapChart').getContext('2d');
+            new Chart(ctxBystander, {
+                type: 'bar',
+                data: {
+                    labels: ['হস্তক্ষেপের ইচ্ছা প্রকাশ', 'বাস্তবে কার্যকর হস্তক্ষেপ', 'অ্যাকশন ফেলিয়ার গ্যাপ'],
+                    datasets: [{
+                        label: 'শতকরা হার (%)',
+                        data: [90.0, 20.0, 70.0],
+                        backgroundColor: [
+                            'rgba(16, 185, 129, 0.85)',
+                            'rgba(239, 68, 68, 0.85)',
+                            'rgba(245, 158, 11, 0.85)'
+                        ],
+                        borderRadius: 6
+                    }]
+                },
+                options: {
+                    responsive: true,
+                    maintainAspectRatio: false,
+                    plugins: {
+                        legend: { display: false },
+                        tooltip: {
+                            callbacks: {
+                                label: function(context) { return context.raw + '%'; }
+                            }
+                        }
+                    },
+                    scales: {
+                        y: {
+                            max: 100,
+                            grid: { color: 'rgba(255,255,255,0.05)' },
+                            ticks: { color: '#94a3b8', font: { family: 'Space Grotesk' } }
+                        },
+                        x: {
+                            grid: { display: false },
+                            ticks: { color: '#f8fafc', font: { family: 'Hind Siliguri', size: 12 } }
+                        }
+                    }
+                }
+            });
+        });
+    </script>
+</body>
+</html>
+
